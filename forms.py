@@ -12,3 +12,7 @@ class LoginForm(FlaskForm):
     username = StringField("Brukernavn", validators=[InputRequired()])
     password = PasswordField("Passord", validators=[InputRequired()])
     submit = SubmitField("logg inn")
+
+class PlanForm(FlaskForm):
+    aktivitet = StringField("Aktivitet", validators=[InputRequired()])
+    submit = SubmitField("Lagre plan", validators=[InputRequired()])
