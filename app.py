@@ -61,11 +61,25 @@ def register():
         brukernavn = form.username.data
         passord = form.password.data
 
+        conn = get_conn()
+        cur = conn.cursor()
+
+        #sjekke om brukeren eksisterer
+        cur.execute(
+            "SELECT * FROM brukere WHERE Brukernavn=%s",
+            (brukernavn,)
+        )
+        existing_user = cur.fetchone()
+
+        if existing_user:
+            form.username.errors.append("Brukernavn er opptatt")
+            cur.close()
+            conn.close()
+            return render_template("register.html", form=form)
+
         #lagre passord som en hash
         passord_hash = generate_password_hash(passord)
 
-        conn = get_conn()
-        cur = conn.cursor()
 
         cur.execute(
             "INSERT INTO brukere (Navn, Brukernavn, Passord) VALUES (%s, %s, %s)",
