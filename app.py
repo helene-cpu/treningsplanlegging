@@ -8,7 +8,7 @@ app.secret_key = "veldig_hemmelig"
 def get_conn():
     return mysql.connector.connect(
         host="localhost",
-        user="trening",
+        user="trener",
         password="Strkno321!",
         database="treningsplanlegger"
     )
@@ -25,7 +25,7 @@ def index():
         cur = conn.cursor()
 
         cur.execute(
-            "SELECT navn FROM Brukere WHERE brukernavn=%s AND passord=%s",
+            "SELECT navn FROM brukere WHERE Brukernavn=%s AND Passord=%s",
             (brukernavn, password)
         )
 
@@ -57,7 +57,7 @@ def register():
         cur = conn.cursor()
 
         cur.execute(
-            "INSERT INTO Brukere (Navn, Brukernavn, Passord) VALUES (%s, %s, %s)",
+            "INSERT INTO brukere (Navn, Brukernavn, Passord) VALUES (%s, %s, %s)",
             (navn, brukernavn, passord)
         )
 
