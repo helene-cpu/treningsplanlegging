@@ -8,5 +8,12 @@
     {{ form.password.label }}{{ form.password }}<br>
     {{ form.submit}}
 </form>
+<div class="register">
+    <h2>Har du ikke en bruker?</h1>
+    <a href="{{ url_for('register') }}">
+        <button type="button">Opprett ny bruker</button>
+    </a>
+
+</div>
 {% endblock %}
 
