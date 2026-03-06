@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Hello, world!</h1>
+<h1>Din treningsplan</h1>
+<form method="POST">
+     {{ form.hidden_tag() }}
+    {{ form.aktivitet.label }}{{ form.aktivitet }}
+    {{ form.submit }}
+</form>
 {% endblock %}

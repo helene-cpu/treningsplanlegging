@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, session
 import mysql.connector
-from forms import RegisterForm, LoginForm
+from forms import RegisterForm, LoginForm, PlanForm
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
@@ -82,7 +82,27 @@ def register():
 
 @app.route("/dashboard", methods=["POST", "GET"])
 def dashboard():
-    return render_template("dashboard.html")
+    form= PlanForm()
+
+    aktivitet = form.aktivitet.data
+
+    if "navn" not in session:
+        return redirect("/")
+
+    conn = get_conn()
+    cur = conn.cursor()
+
+    if form.validate_on_submit():
+
+        cur.execute(
+            "INSERT INTO treningsplan(Navn, aktivitet) VALUES (%s, %s)",
+            (session["navn"], aktivitet)
+        )
+        conn.commit()
+        cur.close()
+        conn.close()
+
+    return render_template("dashboard.html", form=form)
 
 
 if __name__ == "__main__":
