@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, session
 import mysql.connector
 from forms import RegisterForm, LoginForm
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = "veldig_hemmelig"
@@ -25,8 +26,8 @@ def index():
         cur = conn.cursor()
 
         cur.execute(
-            "SELECT navn FROM brukere WHERE Brukernavn=%s AND Passord=%s",
-            (brukernavn, password)
+            "SELECT navn, passord FROM brukere WHERE Brukernavn=%s",
+            (brukernavn,)
         )
 
         user = cur.fetchone()
@@ -34,9 +35,16 @@ def index():
         cur.close()
         conn.close()
 
+        #sjekker om bruker eksisterer
         if user:
-            session['navn'] = user[0]
-            return redirect("/dashboard")
+            passord_db = user[1]
+
+            if check_password_hash(passord_db, password):
+                session['navn'] = user[0]
+                return redirect("/dashboard")
+            else:
+                form.username.errors.append("Feil brukernavn eller passord")
+
         else:
             form.username.errors.append("Feil brukernavn eller passord")
 
@@ -53,12 +61,15 @@ def register():
         brukernavn = form.username.data
         passord = form.password.data
 
+        #lagre passord som en hash
+        passord_hash = generate_password_hash(passord)
+
         conn = get_conn()
         cur = conn.cursor()
 
         cur.execute(
             "INSERT INTO brukere (Navn, Brukernavn, Passord) VALUES (%s, %s, %s)",
-            (navn, brukernavn, passord)
+            (navn, brukernavn, passord_hash)
         )
 
         conn.commit()
