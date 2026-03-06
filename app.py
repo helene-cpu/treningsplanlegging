@@ -82,28 +82,40 @@ def register():
 
 @app.route("/dashboard", methods=["POST", "GET"])
 def dashboard():
-    form= PlanForm()
-
-    aktivitet = form.aktivitet.data
-
     if "navn" not in session:
         return redirect("/")
+
+    form= PlanForm()
 
     conn = get_conn()
     cur = conn.cursor()
 
     if form.validate_on_submit():
 
+        aktivitet = form.aktivitet.data
+
         cur.execute(
             "INSERT INTO treningsplan(Navn, aktivitet) VALUES (%s, %s)",
             (session["navn"], aktivitet)
         )
         conn.commit()
-        cur.close()
-        conn.close()
+    
+    cur.execute(
+        "SELECT * FROM treningsplan WHERE Navn=%s",
+        (session["navn"],)
+    )
 
-    return render_template("dashboard.html", form=form)
+    planer= cur.fetchall()
 
+    cur.close()
+    conn.close()
+
+    return render_template("dashboard.html", form=form, planer=planer)
+
+
+@app.route("/faq")
+def faq():
+    return render_template("faq.html")
 
 if __name__ == "__main__":
     app.run(debug=True)

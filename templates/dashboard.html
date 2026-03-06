@@ -7,4 +7,10 @@
     {{ form.aktivitet.label }}{{ form.aktivitet }}
     {{ form.submit }}
 </form>
+
+<ul>
+{% for plan in planer %}
+    <li>{{ plan[2] }}</li>
+{% endfor %}
+</ul>
 {% endblock %}
